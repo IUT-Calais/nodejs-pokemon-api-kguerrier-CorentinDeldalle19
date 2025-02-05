@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 import { PrismaClient } from "@prisma/client";
+import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
 
 // Récupérer tous les pokemons
-router.get('/pokemons-cards/', async (req, res) => {
+router.get('/pokemons-cards/', async (_req: Request, res: Response) => {
   try {
     const pokemonCards = await prisma.pokemonCard.findMany(
       {
@@ -19,12 +20,12 @@ router.get('/pokemons-cards/', async (req, res) => {
 })
 
 // Récupérer un pokemon spécifique
-router.get('/pokemons-cards/:id', async (req, res) => {
+router.get('/pokemons-cards/:id', async (_req: Request, res: Response) => {
   try {
     const pokemon = await prisma.pokemonCard.findUnique(
       {
         where: {
-          id: Number(req.params.id)
+          id: Number(_req.params.id)
         }
       }
     )
@@ -35,8 +36,8 @@ router.get('/pokemons-cards/:id', async (req, res) => {
 })
 
 // Créer un nouveau pokémon
-router.post('/pokemons-cards', async (req, res) => {
-  const {id, name, pokedexId, type, lifePoints, size, weight, imageUrl} = req.body;
+router.post('/pokemons-cards', async (_req: Request, res: Response) => {
+  const {id, name, pokedexId, type, lifePoints, size, weight, imageUrl} = _req.body;
 
   // On vérifie que tous les champs soient remplis
   if (!name || !pokedexId || !type || !lifePoints){
@@ -77,9 +78,9 @@ router.post('/pokemons-cards', async (req, res) => {
 })
 
 // Modifier une carte pokémon
-router.patch('/pokemons-cards/:id', async (req, res) => {
-  const pokemonCardId = Number(req.params.id);
-  const {id, name, pokedexId, type, lifePoints, size, weight, imageUrl} = req.body;
+router.patch('/pokemons-cards/:id', async (_req: Request, res: Response) => {
+  const pokemonCardId = Number(_req.params.id);
+  const {id, name, pokedexId, type, lifePoints, size, weight, imageUrl} = _req.body;
 
   // On vérifie que le pokémon existe
   const existingPokemon = await prisma.pokemonCard.findUnique(
@@ -130,11 +131,11 @@ router.patch('/pokemons-cards/:id', async (req, res) => {
   res.status(200).json(updatedPokemon);
 })
 
-router.delete('/pokemons-cards/:id', async (req, res) => {
+router.delete('/pokemons-cards/:id', async (_req: Request, res: Response) => {
   // On vérifie si le pokemon existe
   const existingPokemon = await prisma.pokemonCard.findUnique({
     where: {
-      id: Number(req.params.id)
+      id: Number(_req.params.id)
     }
   })
   if(!existingPokemon){
@@ -143,7 +144,7 @@ router.delete('/pokemons-cards/:id', async (req, res) => {
 
   await prisma.pokemonCard.delete({
     where: {
-      id: Number(req.params.id)
+      id: Number(_req.params.id)
     }
   })
 
