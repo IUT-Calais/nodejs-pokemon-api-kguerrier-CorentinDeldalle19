@@ -1,9 +1,13 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log("Seeding database...");
+
   await prisma.type.deleteMany();
+
   await prisma.type.createMany({
     data: [
       { name: 'Normal' },
@@ -27,12 +31,21 @@ async function main() {
     ],
   });
 
-  console.log('Seed completed!');
+  const hashedPassword = await bcrypt.hash("admin", 10);
+
+  await prisma.user.deleteMany();
+
+  await prisma.user.create({
+    data: { email: "admin@gmail.com", password: hashedPassword },
+  });
+
+  console.log("Seed completed!");
 }
 
 main()
-  .catch((e) => {
-    throw e;
+  .catch((error) => {
+    console.error("Error seeding database:", error);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

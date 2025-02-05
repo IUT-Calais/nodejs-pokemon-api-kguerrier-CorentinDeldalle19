@@ -60,7 +60,7 @@ router.post('/pokemons-cards', async (req: Request, res: Response) => {
   });
 
   if (existingPokemon) {
-    return res.status(400).json({ error: "Le Pokémon existe déjà" });
+    return res.status(200).json({ error: "Le Pokémon existe déjà" });
   }
 
   // Créer le Pokémon avec le `typeId` du type existant ou nouvellement créé
