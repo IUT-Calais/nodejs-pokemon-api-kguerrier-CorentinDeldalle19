@@ -1,15 +1,20 @@
 import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import pokemonCardsRoutes from './routes/pokemonCards';
+import usersRoutes from './routes/users'
 
-export const app = express();
-const port = process.env.PORT || 3000;
+const app = express();
 
-app.use(express.json());
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
-export const server = app.listen(port);
+app.use('/api', pokemonCardsRoutes);
+app.use('/api', usersRoutes)
 
-export function stopServer() {
-  server.close();
-}
+const PORT = process.env.PORT || 3000;
 
-const pokemonsCardsRoutes = require('./routes/pokemonCards');
-app.use('/api', pokemonsCardsRoutes);
+app.listen(PORT, () => {
+  console.log(`Serveur en écoute sur le port ${PORT}`);
+});
